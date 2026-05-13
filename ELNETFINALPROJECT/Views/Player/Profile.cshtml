@@ -1,0 +1,9 @@
+@{
+    ViewData["Title"] = "Profile - GameTime";
+    Layout = null;
+}
+@{
+    // Profile is managed inside the Player Dashboard.
+    // This view simply redirects there.
+    Context.Response.Redirect("/Player/Dashboard");
+}

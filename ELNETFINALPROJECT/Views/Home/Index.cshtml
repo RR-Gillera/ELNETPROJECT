@@ -1,0 +1,616 @@
+@{
+    ViewData["Title"] = "GameTime Management System";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #0d1f2d 0%, #1a2f3f 50%, #0d2438 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        .navbar-custom {
+            background: linear-gradient(135deg, rgba(13, 31, 45, 0.95) 0%, rgba(26, 47, 63, 0.95) 100%) !important;
+            padding: 20px 0;
+            border: none !important;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #ffffff !important;
+            text-decoration: none;
+        }
+
+        .brand-text {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .brand-white { color: #ffffff; }
+        .brand-green { color: #00ff88; }
+
+        .nav-icon-wrap {
+            display: flex;
+            align-items: center;
+        }
+
+        .system-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(20, 35, 50, 0.7);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 13px;
+            color: #e0e6ed;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px #00ff88;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse-dot {
+            0%, 100% { box-shadow: 0 0 4px #00ff88; opacity: 1; }
+            50%       { box-shadow: 0 0 10px #00ff88; opacity: 0.8; }
+        }
+
+        .nav-link {
+            color: #b0b8c1 !important;
+            font-size: 14px;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover { color: #00ff88 !important; }
+
+        /* Main Content */
+        .landing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .badge-custom {
+            display: inline-block;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #7a8a99;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            line-height: 1.6;
+        }
+
+        /* Admin Access Box */
+        .admin-access-box {
+            background: rgba(30, 45, 60, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            margin-bottom: 80px;
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #b0b8c1;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .password-input {
+            width: 100%;
+            background: rgba(20, 35, 50, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            padding: 15px 45px 15px 15px;
+            color: #ffffff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .password-input::placeholder { color: #556677; }
+        .password-input:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            background: rgba(20, 35, 50, 0.95);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #00ff88;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .enter-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6f 100%);
+            color: #0d1f2d !important;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .enter-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3); }
+        .enter-btn:active { transform: translateY(0); }
+
+        /* Team Section */
+        .team-section {
+            width: 100%;
+            padding: 60px 20px;
+            margin-top: 40px;
+        }
+
+        .team-badge {
+            display: inline-block;
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            background: rgba(30, 45, 60, 0.6);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .team-card:hover {
+            border-color: rgba(0, 255, 136, 0.3);
+            transform: translateY(-5px);
+            background: rgba(30, 45, 60, 0.8);
+        }
+
+        /* Avatar — shows photo if src is set, initials fallback if not */
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #0d1f2d;
+            font-weight: 700;
+            border: 2px solid rgba(0,255,136,0.3);
+        }
+
+        .team-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            border-radius: 50%;
+        }
+
+        /* Hide initials span when photo loads successfully */
+        .team-avatar img.loaded + .avatar-initials { display: none; }
+
+        .team-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .team-role {
+            font-size: 12px;
+            color: #00ff88;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .team-description {
+            font-size: 14px;
+            color: #7a8a99;
+            line-height: 1.5;
+        }
+
+        /* Support Modal */
+        .support-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        .support-modal.show { display: flex; }
+
+        .support-modal-content {
+            background: linear-gradient(135deg, rgba(13,31,45,0.98) 0%, rgba(26,47,63,0.98) 100%);
+            border: 1px solid rgba(0,255,136,0.3);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @@keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .support-modal-content h2 { color: #00ff88; margin-bottom: 20px; font-size: 24px; font-weight: 700; }
+        .support-modal-content p  { color: #b0b8c1; margin-bottom: 10px; font-size: 16px; line-height: 1.6; }
+        .support-email { color: #00ff88; font-weight: 600; font-size: 18px; margin: 20px 0; }
+
+        .modal-close-btn {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6f 100%);
+            color: #0d1f2d;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        .modal-close-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,255,136,0.3); }
+
+        /* Footer */
+        .site-footer {
+            background: rgba(10,18,26,0.95);
+            border-top: 1px solid rgba(255,255,255,0.07);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-left { display: flex; align-items: center; gap: 48px; }
+        .footer-stat { display: flex; flex-direction: column; gap: 4px; }
+        .footer-stat-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #556677; text-transform: uppercase; }
+        .footer-stat-value { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #c0cad4; font-weight: 500; }
+        .footer-stat-value svg { flex-shrink: 0; }
+
+        .footer-right { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #556677; }
+        .footer-right a { color: #7a8a99; text-decoration: none; transition: color 0.2s; }
+        .footer-right a:hover { color: #00ff88; }
+        .footer-dot { width: 3px; height: 3px; background: #3a4a5a; border-radius: 50%; display: inline-block; margin: 0 2px; }
+
+        @@media (max-width: 768px) {
+            .hero-title { font-size: 48px; }
+            .hero-subtitle { font-size: 16px; }
+            .admin-access-box { padding: 30px 20px; }
+            .team-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <span class="nav-icon-wrap">
+                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="30" height="30" rx="7" fill="#00ff88" />
+                        <path d="M8 15h4M10 13v4" stroke="#0d1f2d" stroke-width="2" stroke-linecap="round" />
+                        <circle cx="18" cy="13.5" r="1" fill="#0d1f2d" />
+                        <circle cx="21" cy="16.5" r="1" fill="#0d1f2d" />
+                        <path d="M6 11.5C6 10 7 9 8.5 9h13C23 9 24 10 24 11.5v5c0 2.5-2 4.5-4.5 4.5h-9C8 21 6 19 6 16.5v-5z" stroke="#0d1f2d" stroke-width="1.5" fill="none" />
+                    </svg>
+                </span>
+                <span class="brand-text">
+                    <span class="brand-white">GAME</span><span class="brand-green">TIME</span>
+                    <span class="brand-white"> MANAGE</span><span class="brand-green">MENT</span>
+                    <span class="brand-white"> SYS</span><span class="brand-green">TEM</span>
+                </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: brightness(0) invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Home/Privacy">Documentation</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <span class="system-status-badge">
+                            <span class="status-dot"></span>
+                            System Online
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Landing Section -->
+    <div class="landing-container">
+        <div class="badge-custom">
+            <i class="bi bi-shield-check"></i> Secure Access Protocol
+        </div>
+
+        <div class="hero-section">
+            <h1 class="hero-title">WELCOME TO<br>GAMETIME</h1>
+            <p class="hero-subtitle">Enter your security credentials to access the premium<br>management dashboard.</p>
+        </div>
+
+        <!-- Admin Access Box -->
+        <form asp-controller="Home" asp-action="Login" method="post" class="admin-access-box">
+            @Html.AntiForgeryToken()
+            <label class="admin-label"><i class="bi bi-lock-fill"></i> Admin Access</label>
+            <div class="password-input-wrapper">
+                <input type="password" name="password" id="adminPassword" class="password-input" placeholder="Enter Security Password" required>
+                <button class="password-toggle" type="button" onclick="togglePassword()">
+                    <i class="bi bi-eye-fill"></i>
+                </button>
+            </div>
+            @if (TempData["Error"] != null)
+            {
+                <div style="color: #ff4a4a; margin-top: 10px; font-size: 14px;">
+                    @TempData["Error"]
+                </div>
+            }
+            <button type="submit" class="enter-btn">
+                <span>ENTER DASHBOARD</span>
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Team Section -->
+    <div class="team-section">
+        <div style="text-align: center;">
+            <div class="team-badge">The Development Team</div>
+        </div>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">
+                    <img src="~/img/russell.png" alt="Gillera, Russell Ray" onerror="this.style.display='none'" />
+                </div>
+                <div class="team-name">Gillera, Russell Ray</div>
+                <div class="team-role">Backend Developer</div>
+                <div class="team-description">Builds and maintains robust server-side infrastructure.</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                <img src="~/img/jerick.png" alt="Service, Jerick" onerror="this.style.display='none'" />
+                </div>
+                <div class="team-name">Service, Jerick</div>
+                <div class="team-role">Documentation</div>
+                <div class="team-description">Authors comprehensive guides and documentation for the platform.</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                <img src="~/img/lourdyn.png" alt="Verdida, Lourdyn Neil" onerror="this.style.display='none'" />
+                </div>
+                <div class="team-name">Verdida, Lourdyn Neil</div>
+                <div class="team-role">Team Project Manager</div>
+                <div class="team-description">Orchestrates team workflows and ensures timely delivery of all sprint objectives.</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                <img src="~/img/euwen.png" alt="Villarin, Euwen Aldrich" onerror="this.style.display='none'" />
+                </div>
+                <div class="team-name">Villarin, Euwen Aldrich</div>
+                <div class="team-role">Lead Developer</div>
+                <div class="team-description">Architects core systems and develops the platform.</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                <img src="~/img/felix.png" alt="Ybañez, Felix Vincent" onerror="this.style.display='none'" />
+                </div>
+                <div class="team-name">Ybañez, Felix Vincent</div>
+                <div class="team-role">Frontend Developer</div>
+                <div class="team-description">Creates responsive and seamless user interface experiences.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-left">
+            <div class="footer-stat">
+                <span class="footer-stat-label">Server Location</span>
+                <span class="footer-stat-value">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7" cy="7" r="6" stroke="#00ff88" stroke-width="1.2" />
+                        <path d="M7 1C7 1 4.5 4 4.5 7C4.5 10 7 13 7 13" stroke="#00ff88" stroke-width="1.2" />
+                        <path d="M7 1C7 1 9.5 4 9.5 7C9.5 10 7 13 7 13" stroke="#00ff88" stroke-width="1.2" />
+                        <path d="M1 7h12" stroke="#00ff88" stroke-width="1.2" />
+                        <path d="M1.5 4.5h11M1.5 9.5h11" stroke="#00ff88" stroke-width="0.8" />
+                    </svg>
+                    Asia-1 (Philippines)
+                </span>
+            </div>
+            <div class="footer-stat">
+                <span class="footer-stat-label">Network Latency</span>
+                <span class="footer-stat-value">
+                    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0" y="9" width="3" height="5" rx="1" fill="#00ff88" />
+                        <rect x="4.5" y="6" width="3" height="8" rx="1" fill="#00ff88" />
+                        <rect x="9" y="3" width="3" height="11" rx="1" fill="#00ff88" />
+                        <rect x="13.5" y="0" width="2.5" height="14" rx="1" fill="#00ff88" opacity="0.4" />
+                    </svg>
+                    42ms Average
+                </span>
+            </div>
+        </div>
+        <div class="footer-right">
+            <span>&copy; 2026 GameTime Management System</span>
+            <span class="footer-dot"></span>
+            <a asp-controller="Home" asp-action="Privacy">Terms</a>
+            <span class="footer-dot"></span>
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <span class="footer-dot"></span>
+            <span style="color: #4a5a6a;">v0.0.1-beta</span>
+        </div>
+    </footer>
+
+    <!-- Support Modal -->
+    <div id="supportModal" class="support-modal">
+        <div class="support-modal-content">
+            <h2>Contact Us</h2>
+            <p>For support and inquiries, please reach out to us:</p>
+            <div class="support-email">GameTime@GameTime.com</div>
+            <p style="font-size: 14px; color: #7a8a99;">We're here to help you get the most out of GameTime Management System.</p>
+            <button class="modal-close-btn" onclick="closeSupportPopup()">Close</button>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('adminPassword');
+            const btn = event.target.closest('.password-toggle');
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-fill');
+                icon.classList.add('bi-eye-slash-fill');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash-fill');
+                icon.classList.add('bi-eye-fill');
+            }
+        }
+
+        function enterDashboard() {
+            const form = document.querySelector('.admin-access-box');
+            if (form) form.submit();
+        }
+
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') enterDashboard();
+        });
+
+        function showSupportPopup(event) {
+            event.preventDefault();
+            document.getElementById('supportModal').classList.add('show');
+        }
+
+        function closeSupportPopup() {
+            document.getElementById('supportModal').classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('supportModal');
+            if (event.target === modal) modal.classList.remove('show');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+@* Shared sidebar partial *@
+@{
+    var current = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<aside class="sidebar">
+    <div class="sidebar-section-label">Navigation</div>
+    <a class="sidebar-item @(current == "Dashboard" ? "active" : "")" href="@Url.Action("Dashboard", "Home")"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a class="sidebar-item @(current == "Players" ? "active" : "")" href="@Url.Action("Players", "Home")"><i class="bi bi-people-fill"></i> Players</a>
+    <a class="sidebar-item @(current == "Stations" ? "active" : "")" href="@Url.Action("Stations", "Home")"><i class="bi bi-display"></i> Stations</a>
+</aside>

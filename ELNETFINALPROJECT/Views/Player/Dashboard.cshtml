@@ -1,0 +1,1718 @@
+@{
+    ViewData["Title"] = "Player Dashboard - GameTime";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap/icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green: #00ff88;
+            --green2: #00cc6a;
+            --green-dim: rgba(0,255,136,0.08);
+            --green-glow: rgba(0,255,136,0.15);
+            --bg: #111111;
+            --bg2: #181818;
+            --bg3: #1e1e1e;
+            --bg4: #242424;
+            --card: #161616;
+            --border: rgba(255,255,255,0.07);
+            --border2: rgba(0,255,136,0.3);
+            --text: #ffffff;
+            --text2: #888888;
+            --text3: #555555;
+            --red: #e53935;
+            --sidebar-w: 240px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg2);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+
+        .sidebar-brand {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--green);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+            .brand-icon svg {
+                color: #111;
+            }
+
+        .brand-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+
+        /* Nav */
+        .sidebar-nav {
+            padding: 14px 12px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.15s;
+            color: var(--text2);
+            text-decoration: none;
+        }
+
+            .nav-item.active {
+                background: var(--bg3);
+                color: var(--green);
+                border: 1px solid rgba(0,255,136,0.12);
+            }
+
+            .nav-item i {
+                font-size: 16px;
+            }
+
+        /* Ad / donation cards */
+        .sidebar-ads {
+            flex: 1;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+
+        .ad-card {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        /* Placeholder cat illustration using CSS */
+        .ad-cat-placeholder {
+            width: 72px;
+            height: 72px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #5bb8d4 0%, #4aa8c4 40%, #3d9db8 100%);
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ad-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .ad-subtitle {
+            font-size: 10px;
+            color: var(--text3);
+            margin-bottom: 10px;
+        }
+
+        .ad-btn {
+            width: 100%;
+            padding: 8px;
+            background: var(--green);
+            color: #111;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+            .ad-btn:hover {
+                background: var(--green2);
+            }
+
+        /* Sidebar user section */
+        .sidebar-user {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--green);
+            flex-shrink: 0;
+            background: var(--bg4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--green);
+            overflow: hidden;
+        }
+
+            .sidebar-user-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .sidebar-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-username {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-rank {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--green);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            margin: 0 12px 14px;
+            width: calc(100% - 24px);
+            padding: 10px;
+            background: rgba(229,57,53,0.12);
+            color: var(--red);
+            border: 1px solid rgba(229,57,53,0.25);
+            border-radius: 7px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+            .logout-btn:hover {
+                background: rgba(229,57,53,0.2);
+                border-color: rgba(229,57,53,0.4);
+            }
+
+        /* ── MAIN ── */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            height: 52px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            flex-shrink: 0;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .topbar-section {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--green);
+        }
+
+        .topbar-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+            .topbar-title span {
+                color: var(--green);
+            }
+
+        /* ── CONTENT ── */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 16px;
+            align-content: start;
+        }
+
+        /* ── BALANCE HERO CARD ── */
+        .hero-card {
+            grid-column: 1 / 3;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 36px 40px;
+            position: relative;
+            overflow: hidden;
+            min-height: 280px;
+        }
+        /* Network lines background */
+        .hero-card-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 55%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+        }
+
+        .hero-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text2);
+            margin-bottom: 8px;
+        }
+
+        .hero-balance {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .hero-time-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text2);
+            margin-bottom: 4px;
+        }
+
+        .hero-time-value {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 24px;
+        }
+
+        .topup-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 28px;
+            background: var(--green);
+            color: #111;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+            .topup-btn:hover {
+                background: var(--green2);
+            }
+
+        .hero-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            z-index: 2;
+            gap: 40px;
+        }
+
+        .hero-session-panel {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            min-width: 300px;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-session-header {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--green);
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0,255,136,0.1);
+            padding-bottom: 10px;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .hero-session-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hero-session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hero-session-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text2);
+            letter-spacing: 1px;
+        }
+
+        .hero-session-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        /* ── PROFILE CARD ── */
+        .profile-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .card-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.3px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .profile-identity {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .profile-photo-wrap {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .profile-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--green);
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden;
+        }
+
+            .profile-photo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 8px;
+            }
+
+
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-username-text {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .profile-email-text {
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 10px;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--green);
+            color: #111;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .field-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin-bottom: 6px;
+        }
+
+        .field-input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 11px 14px;
+            font-size: 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 16px;
+        }
+
+            .field-input:focus {
+                border-color: rgba(0,255,136,0.3);
+            }
+
+        .update-profile-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg3);
+            color: var(--text2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+            .update-profile-btn:hover {
+                border-color: rgba(0,255,136,0.3);
+                color: var(--green);
+            }
+
+            .update-profile-btn:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+                color: var(--text3);
+            }
+
+            .update-profile-btn:not(:disabled):hover {
+                border-color: rgba(0,255,136,0.3);
+                color: var(--green);
+            }
+
+        /* ── SECURITY CARD ── */
+        .security-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .security-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .secured-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--green);
+            letter-spacing: 0.5px;
+        }
+
+        .secured-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 6px var(--green);
+        }
+
+        .sec-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin-bottom: 6px;
+        }
+
+        .sec-input-wrap {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .sec-input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 40px 12px 14px;
+            font-size: 14px;
+            color: var(--text2);
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+            .sec-input:focus {
+                border-color: rgba(0,255,136,0.3);
+            }
+
+        .sec-input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text3);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .update-creds-btn {
+            width: 100%;
+            padding: 13px;
+            background: transparent;
+            color: var(--green);
+            border: 1px solid rgba(0,255,136,0.35);
+            border-radius: 6px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-top: 6px;
+        }
+
+            .update-creds-btn:hover {
+                background: var(--green-dim);
+                border-color: var(--green);
+            }
+
+        /* ── STATUS BAR ── */
+        .status-bar {
+            grid-column: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--green);
+            border-radius: 10px;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon-wrap {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+            .status-icon-wrap i {
+                font-size: 12px;
+                color: #111;
+            }
+
+        .status-text-main {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .status-text-sub {
+            font-size: 11px;
+            color: var(--text2);
+        }
+
+        /* ── TOP-UP MODAL ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.88);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+            .modal-overlay.open {
+                display: flex;
+            }
+
+        .modal-box {
+            position: relative;
+            width: 820px;
+            max-width: 95vw;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .modal-outer {
+            border: 1px solid rgba(0,180,255,0.35);
+            border-radius: 8px;
+            padding: 24px;
+            background: #0a1014;
+            box-shadow: 0 0 40px rgba(0,180,255,0.08);
+        }
+
+        .modal-tag {
+            font-size: 10px;
+            color: rgba(0,180,255,0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .modal-inner {
+            border: 1px solid rgba(0,180,255,0.18);
+            border-radius: 6px;
+            padding: 28px;
+            background: #0c1318;
+            position: relative;
+        }
+
+        .modal-corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+        }
+
+            .modal-corner.tl {
+                top: -1px;
+                left: -1px;
+                border-top: 2px solid rgba(0,180,255,0.45);
+                border-left: 2px solid rgba(0,180,255,0.45);
+                border-radius: 4px 0 0 0;
+            }
+
+            .modal-corner.tr {
+                top: -1px;
+                right: -1px;
+                border-top: 2px solid rgba(0,180,255,0.45);
+                border-right: 2px solid rgba(0,180,255,0.45);
+                border-radius: 0 4px 0 0;
+            }
+
+            .modal-corner.bl {
+                bottom: -1px;
+                left: -1px;
+                border-bottom: 2px solid rgba(0,180,255,0.45);
+                border-left: 2px solid rgba(0,180,255,0.45);
+                border-radius: 0 0 0 4px;
+            }
+
+            .modal-corner.br {
+                bottom: -1px;
+                right: -1px;
+                border-bottom: 2px solid rgba(0,180,255,0.45);
+                border-right: 2px solid rgba(0,180,255,0.45);
+                border-radius: 0 0 4px 0;
+            }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.3);
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+            .modal-close:hover {
+                color: #fff;
+            }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-left: 10px;
+        }
+
+        .modal-section-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .amount-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .amount-preset {
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: #111820;
+        }
+
+            .amount-preset:hover {
+                border-color: rgba(0,255,136,0.3);
+            }
+
+            .amount-preset.selected {
+                border: 2px solid var(--green);
+                background: rgba(0,255,136,0.07);
+            }
+
+            .amount-preset .ap-val {
+                font-family: 'Rajdhani', sans-serif;
+                font-size: 18px;
+                font-weight: 700;
+                color: #fff;
+            }
+
+            .amount-preset.selected .ap-val {
+                color: var(--green);
+            }
+
+            .amount-preset .ap-pts {
+                font-size: 9px;
+                color: rgba(255,255,255,0.3);
+                letter-spacing: 0.5px;
+            }
+
+            .amount-preset.selected .ap-pts {
+                color: rgba(0,255,136,0.6);
+            }
+
+        .modal-input {
+            width: 100%;
+            background: #111820;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+        }
+
+        .modal-input-wrap {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+            .modal-input-wrap span {
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: rgba(255,255,255,0.35);
+                font-size: 13px;
+            }
+
+            .modal-input-wrap .modal-input {
+                padding-left: 28px;
+            }
+
+        .pay-method {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pay-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+            .pay-label.active {
+                border-color: var(--green);
+                color: #fff;
+                background: rgba(0,255,136,0.04);
+            }
+
+            .pay-label i {
+                font-size: 16px;
+                color: rgba(255,255,255,0.35);
+            }
+
+            .pay-label.active i {
+                color: var(--green);
+            }
+
+            .pay-label input[type="radio"] {
+                accent-color: var(--green);
+            }
+
+        .modal-enc-note {
+            margin-top: 14px;
+            font-size: 9px;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .modal-enc-note a {
+                color: rgba(255,255,255,0.2);
+                text-decoration: none;
+            }
+
+        .card-fields-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .card-fields-label i {
+                font-size: 13px;
+            }
+
+        .card-field {
+            margin-bottom: 10px;
+        }
+
+        .card-field-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .card-grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .execute-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--green);
+            color: #111;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+            .execute-btn:hover {
+                background: var(--green2);
+                box-shadow: 0 4px 20px rgba(0,255,136,0.3);
+            }
+
+        .modal-footer {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .modal-footer-inner {
+            border: 1px solid rgba(0,255,136,0.18);
+            border-radius: 4px;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 300px;
+            justify-content: space-between;
+        }
+
+        .mf-check {
+            width: 22px;
+            height: 22px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+            .mf-check i {
+                font-size: 12px;
+                color: #111;
+            }
+
+        .mf-text-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .mf-text-sub {
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <!-- Brand -->
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8h4M5 6v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <circle cx="10.5" cy="7" r="0.9" fill="currentColor" />
+                    <circle cx="12.5" cy="9" r="0.9" fill="currentColor" />
+                    <path d="M1 6C1 4.9 1.9 4 3 4h10C14.1 4 15 4.9 15 6v3c0 1.7-1.3 3-3 3H4C2.3 12 1 10.7 1 9V6z" stroke="currentColor" stroke-width="1.4" fill="none" />
+                </svg>
+            </div>
+            <div class="brand-name">GAMETIME</div>
+        </div>
+
+        <!-- Nav -->
+        <div class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <i class="bi bi-graph-up"></i>
+                Dashboard
+            </a>
+        </div>
+
+        <!-- Ad cards -->
+        <div class="sidebar-ads">
+            <!-- Ad card 1 -->
+            <div class="ad-card">
+                <div class="ad-cat-placeholder">🐱</div>
+                <div class="ad-title">Buy us a gaming chair?</div>
+                <div class="ad-subtitle">Our backs are killing us! 🪑</div>
+                <button class="ad-btn">Donate</button>
+            </div>
+            <!-- Ad card 2 -->
+            <div class="ad-card">
+                <div class="ad-cat-placeholder" style="background: linear-gradient(135deg, #4db6ac 0%, #26a69a 100%);">😺</div>
+                <div class="ad-title">Buy us a gaming chair?</div>
+                <div class="ad-subtitle">Our backs are killing us! 🪑</div>
+                <button class="ad-btn">Donate</button>
+            </div>
+        </div>
+
+        <!-- User section -->
+        <div class="sidebar-user">
+            <div class="sidebar-user-avatar" id="sidebarAvatar">
+                <span id="sidebarAvatarInitials">@(ViewData["DisplayName"]?.ToString()?.Substring(0, 2).ToUpper() ?? "CG")</span>
+            </div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-username" id="sidebarUsername">@ViewData["DisplayName"] ?? "User"</div>
+                <div class="sidebar-rank" id="sidebarRank">@((string?)ViewData["PlayerRank"] ?? "Bronze")</div>
+            </div>
+        </div>
+
+        <!-- Logout -->
+        <button class="logout-btn" onclick="confirmLogout()">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <span class="topbar-section">Command Center</span>
+                <span class="topbar-title">Welcome back, Agent <span id="topbarName">@(ViewData["DisplayName"]?.ToString() ?? "Guest")</span></span>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+
+
+            <!-- BALANCE HERO CARD -->
+            <div class="hero-card">
+                <!-- Network background SVG -->
+                <svg class="hero-card-bg" viewBox="0 0 600 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="420" cy="110" r="180" stroke="#00ff88" stroke-width="0.4" opacity="0.25" />
+                    <circle cx="420" cy="110" r="120" stroke="#00ff88" stroke-width="0.4" opacity="0.2" />
+                    <circle cx="420" cy="110" r="70" stroke="#00ff88" stroke-width="0.4" opacity="0.15" />
+                    <line x1="240" y1="110" x2="600" y2="110" stroke="#00ff88" stroke-width="0.4" opacity="0.2" />
+                    <line x1="420" y1="-70" x2="420" y2="290" stroke="#00ff88" stroke-width="0.4" opacity="0.2" />
+                    <line x1="293" y1="-17" x2="547" y2="237" stroke="#00ff88" stroke-width="0.4" opacity="0.15" />
+                    <line x1="547" y1="-17" x2="293" y2="237" stroke="#00ff88" stroke-width="0.4" opacity="0.15" />
+                    <circle cx="420" cy="-70" r="5" fill="#00ff88" opacity="0.3" />
+                    <circle cx="600" cy="110" r="5" fill="#00ff88" opacity="0.3" />
+                    <circle cx="420" cy="290" r="5" fill="#00ff88" opacity="0.3" />
+                    <circle cx="293" cy="-17" r="3.5" fill="#00ff88" opacity="0.25" />
+                    <circle cx="547" cy="-17" r="3.5" fill="#00ff88" opacity="0.25" />
+                    <circle cx="293" cy="237" r="3.5" fill="#00ff88" opacity="0.25" />
+                </svg>
+
+                <div class="hero-flex">
+                    <div class="hero-content">
+                        <div class="hero-label">Available Time Credits</div>
+                        <div class="hero-balance" id="balanceDisplay">₱@((ViewData["Balance"] is decimal balance ? balance.ToString("F2") : "0.00"))</div>
+                        <div class="hero-time-label">Remaining Play Time</div>
+                        <div class="hero-time-value" id="remainingTime">@((int?)ViewData["RemainingHours"] ?? 0)h @(String.Format("{0:D2}", (int?)ViewData["RemainingMinutes"] ?? 0))m</div>
+                        <button class="topup-btn" onclick="openTopUp()">
+                            Top Up Balance &nbsp;<i class="bi bi-lightning-fill"></i>
+                        </button>
+                    </div>
+
+                    <div class="hero-session-panel">
+                        <div class="hero-session-header">LIVE SESSION</div>
+                        <div class="hero-session-grid">
+                            <div class="hero-session-item">
+                                <span class="hero-session-label">STATION</span>
+                                <span class="hero-session-value" id="sessionStation">@((string?)ViewData["CurrentStation"] ?? "—")</span>
+                            </div>
+                            <div class="hero-session-item">
+                                <span class="hero-session-label">ELAPSED</span>
+                                <span class="hero-session-value" id="sessionElapsed">0h 00m</span>
+                            </div>
+                            <div class="hero-session-item">
+                                <span class="hero-session-label">REMAINING</span>
+                                <span class="hero-session-value" id="sessionRemaining">0h 00m</span>
+                            </div>
+                            <div class="hero-session-item">
+                                <span class="hero-session-label">RATE</span>
+                                <span class="hero-session-value" id="sessionRate">₱20 / hr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE CARD -->
+            <div class="profile-card">
+                <div class="card-title">Profile Identity</div>
+
+                <div class="profile-identity">
+                    <div class="profile-photo-wrap">
+                        <div class="profile-photo" id="profilePhoto">
+                            <span id="profilePhotoInitials">@(ViewData["DisplayName"]?.ToString()?.Substring(0, 2).ToUpper() ?? "CG")</span>
+                        </div>
+                        <input type="file" id="profilePictureInput" accept="image/*" style="display:none;" onchange="handleProfilePictureUpload(this)" />
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-username-text" id="profileUsername">@ViewData["DisplayName"] ?? "User"</div>
+                        <div class="profile-email-text" id="profileEmail">@ViewData["Email"]</div>
+                        <span class="verified-badge">
+                            <i class="bi bi-check-circle-fill" style="font-size:10px;"></i>
+                            @((bool)ViewData["IsVerified"] ? "Verified Player" : "Unverified")
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field-label">Player Name</div>
+                <input type="text" class="field-input" id="profileDisplayName" value="@ViewData["DisplayName"] ?? \" User\"" disabled />
+
+                <button class="update-profile-btn" id="updateProfileBtn" onclick="document.getElementById('profilePictureInput').click()">
+                    <i class="bi bi-camera"></i> Update Profile Photo
+                </button>
+            </div>
+
+            <!-- SECURITY CARD -->
+            <div class="security-card">
+                <div class="security-header">
+                    <div class="card-title" style="margin-bottom:0;">Security Protocol</div>
+                    <div class="secured-badge">
+                        <span class="secured-dot"></span>
+                        Secured
+                    </div>
+                </div>
+
+                <div class="sec-label">Current Access Key</div>
+                <div class="sec-input-wrap">
+                    <input type="password" class="sec-input" id="currentPassword" placeholder="••••••••••" />
+                    <i class="bi bi-lock sec-input-icon"></i>
+                </div>
+
+                <div class="sec-label">New Access Key</div>
+                <div class="sec-input-wrap">
+                    <input type="password" class="sec-input" id="newPassword" placeholder="••••••••••" />
+                    <i class="bi bi-lock sec-input-icon"></i>
+                </div>
+
+                <div class="sec-label">Confirm Protocol</div>
+                <div class="sec-input-wrap">
+                    <input type="password" class="sec-input" id="confirmPassword" placeholder="••••••••••" />
+                    <i class="bi bi-lock sec-input-icon"></i>
+                </div>
+
+                <button class="update-creds-btn" onclick="updateCredentials()">
+                    Update Access Credentials
+                </button>
+            </div>
+
+            <!-- STATUS BAR -->
+            <div class="status-bar">
+                <div class="status-left">
+                    <div class="status-icon-wrap">
+                        <i class="bi bi-info-lg"></i>
+                    </div>
+                    <div>
+                        <div class="status-text-main">System Status: Optimal</div>
+                        <div class="status-text-sub">All protocols are running normally</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TOP-UP MODAL -->
+    <div class="modal-overlay" id="topUpModal">
+        <div class="modal-box">
+            <div class="modal-outer">
+                <div class="modal-tag">Top Up Balance Screen</div>
+                <div class="modal-inner">
+                    <div class="modal-corner tl"></div>
+                    <div class="modal-corner tr"></div>
+                    <div class="modal-corner bl"></div>
+                    <div class="modal-corner br"></div>
+
+                    <button class="modal-close" onclick="closeTopUp()"><i class="bi bi-x-lg"></i></button>
+
+                    <div class="modal-grid">
+                        <!-- LEFT -->
+                        <div>
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+                                <div style="width:26px;height:26px;background:var(--green);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8h4M5 6v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><circle cx="10.5" cy="7" r="0.9" fill="currentColor" /><circle cx="12.5" cy="9" r="0.9" fill="currentColor" /></svg>
+                                </div>
+                                <div>
+                                    <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;color:#fff;">BALANCE PROTOCOL</div>
+                                    <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:1px;font-family:'JetBrains Mono',monospace;" id="txId">TRANSACTION ID: GT-00000-TX</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+                                <div style="display:flex;align-items:center;gap:5px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.18);border-radius:12px;padding:3px 10px;font-size:9px;color:var(--green);letter-spacing:1px;">
+                                    <span style="width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;"></span>
+                                    SECURE LINK ESTABLISHED
+                                </div>
+                            </div>
+
+                            <div class="modal-section-label">
+                                <span>Select Credits</span>
+                                <span style="color:rgba(255,255,255,0.25);">PTS Equivalent</span>
+                            </div>
+                            <div class="amount-grid">
+                                <div class="amount-preset" onclick="selectAmount(50, this)">
+                                    <div class="ap-val">₱50</div>
+                                    <div class="ap-pts">5,000 PTS</div>
+                                </div>
+                                <div class="amount-preset selected" onclick="selectAmount(100, this)">
+                                    <div class="ap-val">₱100</div>
+                                    <div class="ap-pts">10,000 PTS</div>
+                                </div>
+                                <div class="amount-preset" onclick="selectAmount(250, this)">
+                                    <div class="ap-val">₱250</div>
+                                    <div class="ap-pts">25,000 PTS</div>
+                                </div>
+                            </div>
+
+                            <div style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Custom Amount</div>
+                            <div class="modal-input-wrap">
+                                <span>₱</span>
+                                <input type="number" class="modal-input" id="customAmount" placeholder="0.00" min="0" step="0.01" oninput="onCustomAmount(this.value)" onfocus="clearPresets()" />
+                            </div>
+
+                            <div class="modal-section-label" style="margin-bottom:10px;">Payment Protocol</div>
+                            <div class="pay-method">
+                                <label class="pay-label active">
+                                    <input type="radio" name="payMethod" value="card" checked onchange="showPayMethod('card')" />
+                                    <i class="bi bi-credit-card-fill"></i>
+                                    Credit / Debit Card
+                                </label>
+                                <label class="pay-label">
+                                    <input type="radio" name="payMethod" value="gcash" onchange="showPayMethod('gcash')" />
+                                    <i class="bi bi-qr-code"></i>
+                                    Gcash QR Payment
+                                </label>
+                                <label class="pay-label">
+                                    <input type="radio" name="payMethod" value="wallet" onchange="showPayMethod('wallet')" />
+                                    <i class="bi bi-wallet2"></i>
+                                    Digital Wallets
+                                </label>
+                            </div>
+
+                            <div class="modal-enc-note">
+                                <span><i class="bi bi-shield-lock-fill" style="color:var(--green);margin-right:4px;"></i>256-BIT AES ENCRYPTION ACTIVE</span>
+                                <span style="display:flex;gap:12px;">
+                                    <a href="#">TERMS OF SERVICE</a>
+                                    <a href="#">REFUND POLICY</a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT -->
+                        <div style="display:flex;flex-direction:column;">
+                            <!-- Card fields -->
+                            <div id="cardFields">
+                                <div class="card-fields-label"><i class="bi bi-credit-card"></i> Card Credentials</div>
+                                <div class="card-field">
+                                    <div class="card-field-label">Cardholder Name</div>
+                                    <input type="text" class="modal-input" placeholder="CYBER GHOST" />
+                                </div>
+                                <div class="card-field">
+                                    <div class="card-field-label">Card Number</div>
+                                    <input type="text" id="cardNumber" class="modal-input" placeholder="**** **** **** 0000" maxlength="19" style="font-family:'JetBrains Mono',monospace;" oninput="formatCardNumber(this)" />
+                                </div>
+                                <div class="card-grid2">
+                                    <div class="card-field">
+                                        <div class="card-field-label">Expiry Date</div>
+                                        <input type="text" id="cardExpiry" class="modal-input" placeholder="MM/YY" maxlength="5" style="font-family:'JetBrains Mono',monospace;" oninput="formatExpiry(this)" />
+                                    </div>
+                                    <div class="card-field">
+                                        <div class="card-field-label">CVV</div>
+                                        <input type="text" class="modal-input" placeholder="123" maxlength="3" style="font-family:'JetBrains Mono',monospace;" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gcash fields -->
+                            <div id="gcashFields" style="display:none;">
+                                <div class="card-fields-label"><i class="bi bi-qr-code"></i> Gcash Payment</div>
+                                <div class="card-field">
+                                    <div class="card-field-label">Gcash Number</div>
+                                    <input type="text" class="modal-input" placeholder="09XXXXXXXXX" maxlength="11" style="font-family:'JetBrains Mono',monospace;" />
+                                </div>
+                            </div>
+
+                            <!-- Wallet fields -->
+                            <div id="walletFields" style="display:none;">
+                                <div class="card-fields-label"><i class="bi bi-wallet2"></i> Digital Wallets</div>
+                                <div class="card-field">
+                                    <div class="card-field-label">Wallet Address</div>
+                                    <input type="text" class="modal-input" placeholder="0xabcd...1234" style="font-family:'JetBrains Mono',monospace;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="execute-btn" onclick="executePaymentWithValidation()">
+                        <i class="bi bi-check-lg"></i> Confirm Top Up
+                    </div>
+
+                    <div class="modal-footer">
+                        <div class="modal-footer-inner">
+                            <div class="mf-text-title">Secure Payment Gateway</div>
+                            <div class="mf-check" style="display:none;">✔</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/payment-control.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script>
+        // Sidebar avatar fallback initials
+        function setDefaultAvatar() {
+            $('.sidebar-user-avatar').each(function() {
+                var initials = $(this).text().trim();
+                if (initials === '') {
+                    $(this).text('CG').css('background', '#00ff88');
+                }
+            });
+        }
+
+        setDefaultAvatar();
+
+        // Confirm logout function
+        function confirmLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Redirect to logout endpoint
+                window.location.href = '/Player/Logout';
+            }
+        }
+
+        // Top up modal functions
+        function openTopUp() {
+            $('#topUpModal').addClass('open');
+            $('body').css('overflow', 'hidden');
+        }
+
+        function closeTopUp() {
+            $('#topUpModal').removeClass('open');
+            $('body').css('overflow', '');
+        }
+
+        function selectAmount(amount, el) {
+            topUpAmount = amount;
+            $('.amount-preset').removeClass('selected');
+            if (el) $(el).addClass('selected');
+            $('#customAmount').val('');
+        }
+
+        function onCustomAmount(value) {
+            topUpAmount = parseFloat(value) || 0;
+            $('.amount-preset').removeClass('selected');
+        }
+
+        function clearPresets() {
+            $('.amount-preset').removeClass('selected');
+        }
+
+        function showPayMethod(method) {
+            $('#cardFields').hide();
+            $('#gcashFields').hide();
+            $('#walletFields').hide();
+            $('#' + method + 'Fields').show();
+        }
+
+        function formatCardNumber(input) {
+            let val = input.value.replace(/\D/g, ''); // Remove non-digits
+            let formatted = val.match(/.{1,4}/g);
+            input.value = formatted ? formatted.join(' ') : val;
+        }
+
+        function formatExpiry(input) {
+            let val = input.value.replace(/\D/g, ''); // Remove non-digits
+            if (val.length >= 3) {
+                input.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+            } else {
+                input.value = val;
+            }
+        }
+
+        // Initial setup
+        $(document).ready(function() {
+            showPayMethod('card');
+
+            // Load real dashboard data from backend
+            loadDashboardData();
+            getProfileData();
+
+            // Refresh dashboard data every 30 seconds
+            setInterval(loadDashboardData, 30000);
+
+            // Close top-up modal on backdrop click
+            $('#topUpModal').on('click', function(e) {
+                if (e.target === this) {
+                    closeTopUp();
+                }
+            });
+        });
+
+        // ── Live session state ────────────────────────────────────────────────
+        let _liveSessionData   = null;
+        let _liveSessionInterval = null;
+
+        const RATE = 20; // ₱20/hr flat
+
+        /**
+         * Format milliseconds as "Xh MMm SSs" for a live, ticking display.
+         * Shows seconds so the user can see it counting every second.
+         */
+        function fmtTime(totalMs) {
+            const totalSec = Math.max(0, Math.floor(totalMs / 1000));
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
+        }
+
+        /**
+         * Parse a UTC datetime string from ASP.NET (which omits the trailing "Z").
+         * Without this fix, new Date("2025-05-12T10:00:00") is treated as LOCAL time
+         * in most browsers, making the elapsed calculation wrong by the UTC offset
+         * (e.g. 8 hours off in the Philippines).
+         */
+        function parseUtcDate(str) {
+            if (!str) return null;
+            // Append "Z" if no timezone designator present
+            if (!/[Zz]$/.test(str) && !/[+\-]\d{2}:\d{2}$/.test(str)) {
+                str = str + 'Z';
+            }
+            return new Date(str);
+        }
+
+        /** Tick — updates elapsed & remaining every second without resetting on polls */
+        function _tickLiveSession() {
+            if (!_liveSessionData) return;
+
+            const now       = Date.now();
+            const elapsedMs = now - _liveSessionData.startMs;
+            // Remaining decreases in real-time since the last poll
+            const sincePoll   = now - _liveSessionData.pollMs;
+            const remainingMs = _liveSessionData.remainingAtPollMs - sincePoll;
+
+            const el = id => document.getElementById(id);
+
+            el('sessionElapsed').textContent   = fmtTime(elapsedMs);
+            el('sessionElapsed').className     = 'hero-session-value';
+            el('sessionRemaining').textContent = fmtTime(remainingMs);
+            el('sessionRemaining').className   = 'hero-session-value';
+
+            // Also update the hero "Remaining Play Time" text to stay in sync
+            const totalRemSec = Math.max(0, Math.floor(remainingMs / 1000));
+            const rH = Math.floor(totalRemSec / 3600);
+            const rM = Math.floor((totalRemSec % 3600) / 60);
+            const remTimeEl = document.getElementById('remainingTime');
+            if (remTimeEl) remTimeEl.textContent = `${rH}h ${String(rM).padStart(2, '0')}m`;
+        }
+
+        function _startLiveTicker() {
+            if (_liveSessionInterval) clearInterval(_liveSessionInterval);
+            _liveSessionInterval = setInterval(_tickLiveSession, 1000);
+        }
+
+        function _stopLiveTicker() {
+            if (_liveSessionInterval) { clearInterval(_liveSessionInterval); _liveSessionInterval = null; }
+            _liveSessionData = null;
+        }
+
+        /** Apply fresh poll data — anchors remaining to current balance without resetting elapsed */
+        function _renderLiveSession(data) {
+            const stLabel = data.currentStation
+                ? 'PC ' + data.currentStation.replace(/\D/g, '').padStart(2, '0')
+                : '—';
+
+            const el = id => document.getElementById(id);
+
+            el('sessionStation').textContent = stLabel;
+            el('sessionStation').className   = data.currentStation ? 'hero-session-value' : 'hero-session-value';
+
+            el('sessionRate').textContent = data.currentStation ? `₱${RATE} / hr` : '—';
+            el('sessionRate').className   = data.currentStation ? 'hero-session-value' : 'hero-session-value';
+
+            if (data.currentStation && data.sessionStartTime) {
+                // FIX 1: parse sessionStartTime as UTC (ASP.NET omits the "Z")
+                const startDate = parseUtcDate(data.sessionStartTime);
+                const startMs   = startDate.getTime();
+
+                // FIX 2: anchor remaining to the CURRENT balance at poll time,
+                //         not to elapsed — so re-polling never resets the countdown.
+                //         balance (₱) ÷ rate (₱/hr) × 3 600 000 ms/hr = remaining ms
+                const remainingAtPollMs = (data.balance / RATE) * 3600000;
+
+                if (_liveSessionData) {
+                    // Session already running — only update the balance anchor, keep startMs intact
+                    _liveSessionData.pollMs           = Date.now();
+                    _liveSessionData.remainingAtPollMs = remainingAtPollMs;
+                } else {
+                    // First render — initialise everything
+                    _liveSessionData = {
+                        startMs,
+                        pollMs: Date.now(),
+                        remainingAtPollMs
+                    };
+                    _startLiveTicker();
+                }
+
+                _tickLiveSession(); // immediate paint
+            } else {
+                _stopLiveTicker();
+                el('sessionElapsed').textContent   = '—';
+                el('sessionElapsed').className     = 'hero-session-value';
+                el('sessionRemaining').textContent = '—';
+                el('sessionRemaining').className   = 'hero-session-value';
+            }
+        }
+
+        /**
+         * Load real dashboard data from backend.
+         * Called on page load and every 30 s to re-anchor the balance.
+         */
+        function loadDashboardData() {
+            fetch('/Player/GetDashboardData')
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) return;
+
+                    // Balance display
+                    $('#balanceDisplay').text('₱' + data.balance.toFixed(2));
+
+                    // Player rank
+                    $('#sidebarRank').text(data.playerRank);
+
+                    // Remaining playtime hero card — only set from poll when no active session ticker
+                    if (!_liveSessionData) {
+                        const remainingTime = `${data.remainingPlaytimeHours}h ${String(data.remainingPlaytimeMinutes).padStart(2, '0')}m`;
+                        $('#remainingTime').text(remainingTime);
+                    }
+
+                    // Live session card
+                    _renderLiveSession(data);
+                })
+                .catch(err => console.error('Error loading dashboard data:', err));
+        }
+    </script>
+</body>
+</html>
